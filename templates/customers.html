@@ -1,0 +1,13 @@
+<h1>Customer List</h1>
+<a href="/customer/add">Add Customer</a>
+<table border="1">
+    <tr><th>Name</th><th>Email</th><th>Phone</th><th>Action</th></tr>
+    {% for c in customers %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.phone }}</td>
+            <td><a href="/customer/delete/{{ c.customer_id }}">Delete</a></td>
+        </tr>
+    {% endfor %}
+</table>
