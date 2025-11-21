@@ -1,5 +1,5 @@
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
-from models import db, Customer, User
+from models import db, Customer, User, Author, Book, Order, OrderItem, Payment
 
 from flask import Flask, render_template, request, redirect
 import os
@@ -63,13 +63,26 @@ def delete_customer(id):
 @login_required
 def chart():
     customers = Customer.query.all()
-    names = [c.name for c in customers]
-    ids = [c.customer_id for c in customers]
 
-    plt.bar(ids, range(len(ids)))
-    plt.title("Customer Count Example")
-    plt.xlabel("Customer ID")
-    plt.ylabel("Dummy Count")
+    labels = []
+    totals = []
+
+    for cust in customers:
+        total_amount = db.session.query(db.func.sum(Order.total_amount)).filter_by(customer_id=cust.customer_id).scalar()
+        if total_amount is None:
+            total_amount = 0
+        labels.append(cust.name)
+        totals.append(total_amount)
+
+    # Create bar chart
+    plt.figure(figsize=(12, 5))
+    plt.bar(labels, totals)
+    plt.xlabel("Customer")
+    plt.ylabel("Total Order Amount ($)")
+    plt.title("Total Spending by Customer")
+    plt.xticks(rotation=45, ha='right')
+
+    plt.tight_layout()
     plt.savefig('static/chart.png')
     plt.close()
 
