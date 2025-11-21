@@ -154,6 +154,67 @@ def chart():
 
     return "<img src='/static/chart.png'>"
 
+# ---------------- ORDERS ----------------
+
+@app.route('/orders')
+@login_required
+def orders():
+    all_orders = Order.query.all()
+    customers = {c.customer_id: c.name for c in Customer.query.all()}
+    return render_template('orders.html', orders=all_orders, customers=customers)
+
+
+@app.route('/order/add', methods=['GET', 'POST'])
+@login_required
+def add_order():
+    if request.method == 'POST':
+        customer_id = request.form['customer_id']
+        book_id = request.form['book_id']
+        quantity = int(request.form['quantity'])
+
+        # get book price
+        book = Book.query.get(book_id)
+        total_price = book.price * quantity
+
+        # create order
+        new_order = Order(
+            customer_id=customer_id,
+            order_date="2025-01-01",   # you can replace this with today's date if you want
+            total_amount=total_price
+        )
+        db.session.add(new_order)
+        db.session.commit()
+
+        # create order item (using the order_id that was created after commit)
+        order_item = OrderItem(
+            order_id=new_order.order_id,
+            book_id=book_id,
+            quantity=quantity
+        )
+        db.session.add(order_item)
+        db.session.commit()
+
+        return redirect('/orders')
+
+    all_customers = Customer.query.all()
+    all_books = Book.query.all()
+
+    return render_template('add_order.html', customers=all_customers, books=all_books)
+
+
+@app.route('/order/delete/<int:id>')
+@login_required
+def delete_order(id):
+    # delete all items in this order first
+    OrderItem.query.filter_by(order_id=id).delete()
+
+    # delete order itself
+    order = Order.query.get(id)
+    db.session.delete(order)
+    db.session.commit()
+
+    return redirect('/orders')
+
 
 # ----------- REGISTER -----------
 @app.route('/register', methods=['GET', 'POST'])

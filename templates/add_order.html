@@ -1,0 +1,23 @@
+<h1>Add Order</h1>
+
+<form method="POST">
+
+    <label>Customer:</label><br>
+    <select name="customer_id">
+        {% for c in customers %}
+        <option value="{{ c.customer_id }}">{{ c.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Book:</label><br>
+    <select name="book_id">
+        {% for b in books %}
+        <option value="{{ b.book_id }}">{{ b.title }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Quantity:</label><br>
+    <input name="quantity" type="number" min="1"><br><br>
+
+    <button type="submit">Place Order</button>
+</form>
