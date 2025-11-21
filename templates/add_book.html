@@ -1,0 +1,24 @@
+<h1>Add Book</h1>
+
+<form method="POST">
+    <label>Title:</label><br>
+    <input name="title"><br><br>
+
+    <label>Author:</label><br>
+    <select name="author_id">
+        {% for a in authors %}
+        <option value="{{ a.author_id }}">{{ a.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Price:</label><br>
+    <input name="price" type="number" step="0.01"><br><br>
+
+    <label>Genre:</label><br>
+    <input name="genre"><br><br>
+
+    <label>Stock Quantity:</label><br>
+    <input name="stock_quantity" type="number"><br><br>
+
+    <button type="submit">Add Book</button>
+</form>

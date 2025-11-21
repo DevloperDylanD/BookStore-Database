@@ -57,6 +57,72 @@ def delete_customer(id):
     db.session.commit()
     return redirect('/customers')
 
+# ---------------- AUTHORS ----------------
+
+@app.route('/authors')
+@login_required
+def authors():
+    all_authors = Author.query.all()
+    return render_template('authors.html', authors=all_authors)
+
+
+@app.route('/author/add', methods=['GET', 'POST'])
+@login_required
+def add_author():
+    if request.method == 'POST':
+        new_author = Author(
+            name=request.form['name']
+        )
+        db.session.add(new_author)
+        db.session.commit()
+        return redirect('/authors')
+    return render_template('add_author.html')
+
+
+@app.route('/author/delete/<int:id>')
+@login_required
+def delete_author(id):
+    author = Author.query.get(id)
+    db.session.delete(author)
+    db.session.commit()
+    return redirect('/authors')
+
+# ---------------- BOOKS ----------------
+
+@app.route('/books')
+@login_required
+def books():
+    all_books = Book.query.all()
+    authors = {a.author_id: a.name for a in Author.query.all()}
+    return render_template('books.html', books=all_books, authors=authors)
+
+@app.route('/book/add', methods=['GET', 'POST'])
+@login_required
+def add_book():
+    if request.method == 'POST':
+        new_book = Book(
+            title=request.form['title'],
+            author_id=request.form['author_id'],
+            price=request.form['price'],
+            genre=request.form['genre'],
+            stock_quantity=request.form['stock_quantity']
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        return redirect('/books')
+
+    all_authors = Author.query.all()
+    return render_template('add_book.html', authors=all_authors)
+
+@app.route('/book/delete/<int:id>')
+@login_required
+def delete_book(id):
+    book = Book.query.get(id)
+    db.session.delete(book)
+    db.session.commit()
+    return redirect('/books')
+
+
 
 # ----------- CHART -----------
 @app.route('/chart')

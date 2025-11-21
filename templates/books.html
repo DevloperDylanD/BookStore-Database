@@ -1,0 +1,25 @@
+<h1>Books</h1>
+
+<a href="/book/add">Add Book</a><br><br>
+
+<table border="1">
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Genre</th>
+        <th>Stock</th>
+        <th>Delete</th>
+    </tr>
+
+    {% for b in books %}
+    <tr>
+        <td>{{ b.title }}</td>
+        <td>{{ authors[b.author_id] }}</td>
+        <td>${{ b.price }}</td>
+        <td>{{ b.genre }}</td>
+        <td>{{ b.stock_quantity }}</td>
+        <td><a href="/book/delete/{{ b.book_id }}">Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,17 @@
+<h1>Authors</h1>
+
+<a href="/author/add">Add Author</a><br><br>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Delete</th>
+    </tr>
+
+    {% for a in authors %}
+    <tr>
+        <td>{{ a.name }}</td>
+        <td><a href="/author/delete/{{ a.author_id }}">Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
