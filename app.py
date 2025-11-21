@@ -1,11 +1,22 @@
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
+from models import db, Customer, User
+
 from flask import Flask, render_template, request, redirect
-from models import db, Customer
+import os
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'secret123'
 db.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # CREATE DATABASE
 with app.app_context():
@@ -20,6 +31,7 @@ def home():
 
 # ----------- CUSTOMER CRUD -----------
 @app.route('/customers')
+@login_required
 def customers():
     all_customers = Customer.query.all()
     return render_template('customers.html', customers=all_customers)
@@ -46,8 +58,9 @@ def delete_customer(id):
     return redirect('/customers')
 
 
-# ----------- CHART VISUALIZATION -----------
+# ----------- CHART -----------
 @app.route('/chart')
+@login_required
 def chart():
     customers = Customer.query.all()
     names = [c.name for c in customers]
@@ -63,6 +76,40 @@ def chart():
     return "<img src='/static/chart.png'>"
 
 
-# ------------- RUN APP -------------
+# ----------- REGISTER -----------
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        new_user = User(
+            email=request.form['email'],
+            password=request.form['password']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect('/login')
+    return render_template('register.html')
+
+
+# ----------- LOGIN -----------
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(email=request.form['email']).first()
+        if user and user.password == request.form['password']:
+            login_user(user)
+            return redirect('/')
+        return "Invalid login. Try again."
+    return render_template('login.html')
+
+
+# ----------- LOGOUT -----------
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/login')
+
+
+# ------------- RUN APP LAST -------------
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,5 +1,14 @@
 <h1>BookStore Management System</h1>
 
-<a href="/customers">View Customers</a><br>
-<a href="/customer/add">Add Customer</a><br>
-<a href="/chart">View Chart</a><br>
+{% if current_user.is_authenticated %}
+    <p>Logged in as {{ current_user.email }}</p>
+
+    <a href="/customers">View Customers</a><br>
+    <a href="/customer/add">Add Customer</a><br>
+    <a href="/chart">View Chart</a><br>
+    <a href="/logout">Logout</a><br>
+
+{% else %}
+    <a href="/login">Login</a><br>
+    <a href="/register">Register</a><br>
+{% endif %}
