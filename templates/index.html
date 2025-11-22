@@ -3,13 +3,23 @@
 {% if current_user.is_authenticated %}
     <p>Logged in as {{ current_user.email }}</p>
 
-    <a href="/customers">View Customers</a><br>
-    <a href="/orders">View Orders</a><br>
-    <a href="/authors">View Authors</a><br>
-    <a href="/books">View Books</a><br>
-    <a href="/chart">View Chart</a><br>
-    <a href="/logout">Logout</a><br>
+    <!-- Orders & Customers Section -->
+    <h2>Orders</h2>
+    <ul>
+        <li><a href="/customers">Manage Customers</a></li>
+        <li><a href="/orders">Manage Orders</a></li>
+        <li><a href="/chart">View Sales Chart</a></li>
+    </ul>
 
+    <!-- Inventory Section -->
+    <h2>Inventory</h2>
+    <ul>
+        <li><a href="/authors">Manage Authors</a></li>
+        <li><a href="/books">Manage Books</a></li>
+    </ul>
+
+    <br>
+    <a href="/logout">Logout</a><br>
 
 {% else %}
     <a href="/login">Login</a><br>
